@@ -1,3 +1,4 @@
+import commonjs from "@rollup/plugin-commonjs"
 import rollupJson from '@rollup/plugin-json';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import * as path from 'path';
@@ -8,7 +9,6 @@ import { OutputFileCache } from '../ng-package/nodes';
 import { readCacheEntry, saveCacheEntry } from '../utils/cache';
 import * as log from '../utils/log';
 import { ensureUnixPath } from '../utils/path';
-import commonjs from "@rollup/plugin-commonjs"
 
 /**
  * Options used in `ng-packagr` for writing flat bundle files.
@@ -25,7 +25,6 @@ export interface RollupOptions {
   cacheDirectory?: string | false;
   fileCache: OutputFileCache;
   cacheKey: string;
-  external: string[];
 }
 
 /** Runs rollup over the given entry file, writes a bundle file. */
@@ -39,7 +38,7 @@ export async function rollupBundleFile(
   // Create the bundle
   const bundle = await rollup.rollup({
     context: 'this',
-    external: moduleId => isExternalDependency(moduleId, opts.external),
+    external: moduleId => isExternalDependency(moduleId),
     inlineDynamicImports: false,
     cache: opts.cache ?? (cacheDirectory ? await readCacheEntry(cacheDirectory, opts.cacheKey) : undefined),
     input: opts.entry,
@@ -98,10 +97,10 @@ export async function rollupBundleFile(
   };
 }
 
-function isExternalDependency(moduleId: string, external?: string[]): boolean {
+function isExternalDependency(moduleId: string): boolean {
   // more information about why we don't check for 'node_modules' path
   // https://github.com/rollup/rollup-plugin-node-resolve/issues/110#issuecomment-350353632
-  if (moduleId.startsWith('.') || moduleId.startsWith('/') || path.isAbsolute(moduleId) || external?.includes(moduleId)) {
+  if (moduleId.startsWith('.') || moduleId.startsWith('/') || path.isAbsolute(moduleId) || moduleId.includes("@comdocks")) {
     // if it's either 'absolute', marked to embed, starts with a '.' or '/' or is the umd bundle and is tslib
     return false;
   }
