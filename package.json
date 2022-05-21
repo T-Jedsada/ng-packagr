@@ -1,5 +1,5 @@
 {
-  "name": "ng-packagr",
+  "name": "ng-packagr-custom-external",
   "version": "14.0.0-rc.0",
   "description": "Compile and package Angular libraries in Angular Package Format (APF)",
   "keywords": [
