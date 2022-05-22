@@ -1,4 +1,4 @@
-import commonjs from "@rollup/plugin-commonjs"
+import commonjs from '@rollup/plugin-commonjs';
 import rollupJson from '@rollup/plugin-json';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import * as path from 'path';
@@ -100,7 +100,14 @@ export async function rollupBundleFile(
 function isExternalDependency(moduleId: string): boolean {
   // more information about why we don't check for 'node_modules' path
   // https://github.com/rollup/rollup-plugin-node-resolve/issues/110#issuecomment-350353632
-  if (moduleId.startsWith('.') || moduleId.startsWith('/') || path.isAbsolute(moduleId) || moduleId.includes("@comdocks")) {
+  if (
+    moduleId.startsWith('.') ||
+    moduleId.startsWith('/') ||
+    path.isAbsolute(moduleId) ||
+    moduleId.includes('@comdocks') ||
+    moduleId.includes('fast-fuzzy') ||
+    moduleId.includes('data-forge')
+  ) {
     // if it's either 'absolute', marked to embed, starts with a '.' or '/' or is the umd bundle and is tslib
     return false;
   }
