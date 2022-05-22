@@ -104,9 +104,7 @@ function isExternalDependency(moduleId: string): boolean {
     moduleId.startsWith('.') ||
     moduleId.startsWith('/') ||
     path.isAbsolute(moduleId) ||
-    moduleId.includes('@comdocks') ||
-    moduleId.includes('fast-fuzzy') ||
-    moduleId.includes('data-forge')
+    moduleId.includes('@comdocks')
   ) {
     // if it's either 'absolute', marked to embed, starts with a '.' or '/' or is the umd bundle and is tslib
     return false;
