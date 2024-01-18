@@ -1,11 +1,13 @@
+import commonjs from '@rollup/plugin-commonjs';
 import rollupJson from '@rollup/plugin-json';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import * as path from 'path';
 import type { OutputAsset, OutputChunk, RollupCache } from 'rollup';
+import sourcemaps from 'rollup-plugin-sourcemaps';
 import { OutputFileCache } from '../ng-package/nodes';
 import { readCacheEntry, saveCacheEntry } from '../utils/cache';
 import * as log from '../utils/log';
-import { fileLoaderPlugin } from './file-loader-plugin';
+import { ensureUnixPath } from '../utils/path';
 
 /**
  * Options used in `ng-packagr` for writing flat bundle files.
@@ -42,7 +44,17 @@ export async function rollupBundleFile(
     external: moduleId => isExternalDependency(moduleId),
     cache: opts.cache ?? (cacheDirectory ? await readCacheEntry(cacheDirectory, opts.cacheKey) : undefined),
     input: opts.entry,
-    plugins: [nodeResolve(), rollupJson(), fileLoaderPlugin(opts.fileCache)],
+    plugins: [
+      nodeResolve(),
+      commonjs(),
+      rollupJson(),
+      sourcemaps({
+        readFile: (path: string, callback: (error: Error | null, data: Buffer | string) => void) => {
+          const fileData = opts.fileCache.get(ensureUnixPath(path));
+          callback(fileData ? null : new Error(`Could not load '${path}' from memory.`), fileData?.content);
+        },
+      }),
+    ],
     onwarn: warning => {
       switch (warning.code) {
         case 'CIRCULAR_DEPENDENCY':
@@ -103,7 +115,12 @@ async function ensureRollup(): Promise<void> {
 function isExternalDependency(moduleId: string): boolean {
   // more information about why we don't check for 'node_modules' path
   // https://github.com/rollup/rollup-plugin-node-resolve/issues/110#issuecomment-350353632
-  if (moduleId.startsWith('.') || moduleId.startsWith('/') || path.isAbsolute(moduleId)) {
+  if (
+    moduleId.startsWith('.') ||
+    moduleId.startsWith('/') ||
+    path.isAbsolute(moduleId) ||
+    moduleId.includes('@getnuvo')
+  ) {
     // if it's either 'absolute', marked to embed, starts with a '.' or '/' or is the umd bundle and is tslib
     return false;
   }

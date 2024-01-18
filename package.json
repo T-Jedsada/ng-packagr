@@ -1,5 +1,5 @@
 {
-  "name": "ng-packagr",
+  "name": "ng-packagr-custom-external",
   "version": "17.1.0",
   "description": "Compile and package Angular libraries in Angular Package Format (APF)",
   "keywords": [
@@ -32,6 +32,7 @@
   "main": "./public_api.js",
   "typings": "./public_api.d.ts",
   "dependencies": {
+    "@rollup/plugin-commonjs": "25.0.7",
     "@rollup/plugin-json": "^6.0.1",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/wasm-node": "^4.5.0",
@@ -52,6 +53,7 @@
     "ora": "^5.1.0",
     "piscina": "^4.2.0",
     "postcss": "^8.4.31",
+    "rollup-plugin-sourcemaps": "0.6.3",
     "rxjs": "^7.8.1",
     "sass": "^1.69.5"
   },
