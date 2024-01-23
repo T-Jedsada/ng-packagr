@@ -120,7 +120,8 @@ function isExternalDependency(moduleId: string): boolean {
     moduleId.startsWith('/') ||
     path.isAbsolute(moduleId) ||
     moduleId.includes('@getnuvo') ||
-    moduleId.includes('core-adapter')
+    moduleId.includes('core-adapter') ||
+    moduleId.includes('vanilla-adapter')
   ) {
     // if it's either 'absolute', marked to embed, starts with a '.' or '/' or is the umd bundle and is tslib
     return false;
